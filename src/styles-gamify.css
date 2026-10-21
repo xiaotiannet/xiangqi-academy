@@ -499,6 +499,123 @@
   color: #0f86bd;
 }
 
+/* 成就一行图标（横向滚动，点击浮出详情） */
+.ach-row {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 8px 2px 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ach-row::-webkit-scrollbar {
+  display: none;
+}
+.ach-ico {
+  position: relative;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  background: #f6f7f9;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.ach-ico-emoji {
+  font-size: 22px;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+.ach-ico.is-done,
+.ach-ico.is-ready {
+  background: #fff6de;
+  border-color: #f2d98a;
+}
+.ach-ico.is-done .ach-ico-emoji,
+.ach-ico.is-ready .ach-ico-emoji {
+  filter: none;
+  opacity: 1;
+}
+.ach-ico-check {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  font-style: normal;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.ach-ico-dot {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: 2px solid #fff;
+}
+.ach-ico-lock {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1;
+}
+.ach-tip {
+  margin: 6px 0 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* 成就详情弹层 */
+.ach-sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ach-sheet-emoji {
+  font-size: 20px;
+}
+.ach-sheet-bar {
+  height: 8px;
+  background: #eff1f4;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+.ach-sheet-bar div {
+  height: 100%;
+  background: var(--yellow);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+.ach-sheet-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.ach-sheet-meta .claimed {
+  color: var(--green-dark);
+}
+
+
 /* ---------- 等级卡 ---------- */
 .level-card {
   display: flex;

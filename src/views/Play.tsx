@@ -147,6 +147,8 @@ export function Play({
   /** 计时是否已经启动：你走出第一手才开始跑表 */
   const [clockOn, setClockOn] = useState(false);
   const [leaveOpen, setLeaveOpen] = useState(false);
+  /** 提示前的确认弹层：先问清楚再扣钻石 */
+  const [hintAskOpen, setHintAskOpen] = useState(false);
   /** 切后台 / 锁屏时暂停秒表 */
   const [paused, setPaused] = useState(false);
 
@@ -491,12 +493,17 @@ export function Play({
     notify(`悔棋完成，-1 ❤️（剩 ${left} 点）`);
   };
 
-  const askHint = async () => {
+  const askHint = () => {
     if (stage !== 'playing' || result || thinking || pos.turn !== side) return;
     if (gems < HINT_COST) {
       notify(`提示要 ${HINT_COST} 💎，先去上课挣点`);
       return;
     }
+    setHintAskOpen(true);
+  };
+
+  const doHint = async () => {
+    setHintAskOpen(false);
     notify('正在计算最佳着法…');
     const mv = await think(pos, { ...level, depth: Math.max(3, level.depth), noise: 0 });
     if (mv) {
@@ -758,6 +765,23 @@ export function Play({
           }}
         >
           重新开始（重新随机执子）
+        </button>
+      </Sheet>
+
+      <Sheet
+        open={hintAskOpen}
+        title="要点提示吗？"
+        onClose={() => setHintAskOpen(false)}
+        closeLabel={null}
+      >
+        <p className="sheet-note">
+          奥斯卡帮你算一手当前最佳着法，会在棋盘上用绿星标出来。要花 <b>{HINT_COST} 💎</b>（当前 {gems} 💎）。
+        </p>
+        <button className="btn btn-primary" onClick={doHint}>
+          花 {HINT_COST} 💎 看提示
+        </button>
+        <button className="btn btn-ghost" onClick={() => setHintAskOpen(false)}>
+          我再想想
         </button>
       </Sheet>
 

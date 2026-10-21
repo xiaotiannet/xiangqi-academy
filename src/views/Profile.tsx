@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CURRICULUM } from '../content/curriculum';
 import {
   ACHIEVEMENTS,
@@ -9,6 +10,7 @@ import {
 } from '../state/progress';
 import type { Game } from '../state/game';
 import { Oscar } from '../components/Oscar';
+import { Sheet } from '../components/Sheet';
 import { sfx } from '../state/sound';
 import { isNative, requestNotificationPermission, voice } from '../state/native';
 import { pick, GREET } from '../content/oscar';
@@ -26,6 +28,8 @@ export function Profile({ game }: Props) {
   const stars = starCount(progress);
   const maxStars = total * 3;
   const played = progress.vsAi.win + progress.vsAi.lose + progress.vsAi.draw;
+  /** 点开的成就详情：存成就 id，null 表示没点 */
+  const [selAch, setSelAch] = useState<string | null>(null);
 
   const patch = (k: keyof typeof progress.settings, v: boolean | number) => {
     game.patchSettings({ [k]: v } as never);
@@ -116,33 +120,32 @@ export function Profile({ game }: Props) {
 
       <div className="card">
         <div className="card-eyebrow">成就 · {Object.keys(progress.claimedAch).length}/{ACHIEVEMENTS.length}</div>
-        <div className="ach-list">
+        <div className="ach-row">
           {ACHIEVEMENTS.map((a) => {
             const claimed = achievementClaimed(progress, a);
-            const got = Math.min(a.goal, a.value(progress));
             const ready = achievementDone(progress, a);
             return (
-              <div className={`ach ${claimed ? 'is-done' : ''} ${ready && !claimed ? 'is-ready' : ''}`} key={a.id}>
-                <div className="ach-emoji">{a.emoji}</div>
-                <div className="ach-main">
-                  <b>{a.name}</b>
-                  <small>{a.desc}</small>
-                  {!claimed && (
-                    <div className="ach-bar">
-                      <div style={{ width: `${Math.round((got / a.goal) * 100)}%` }} />
-                    </div>
-                  )}
-                </div>
-                <div className="ach-right">
-                  {claimed ? <span className="ach-badge">✓</span> : <span className="ach-gem">💎{a.gems}</span>}
-                  <small>
-                    {got}/{a.goal}
-                  </small>
-                </div>
-              </div>
+              <button
+                className={`ach-ico ${claimed ? 'is-done' : ''} ${ready && !claimed ? 'is-ready' : ''}`}
+                key={a.id}
+                onClick={() => {
+                  sfx.tap();
+                  setSelAch(a.id);
+                }}
+              >
+                <span className="ach-ico-emoji">{a.emoji}</span>
+                {claimed ? (
+                  <i className="ach-ico-check">✓</i>
+                ) : ready ? (
+                  <i className="ach-ico-dot" />
+                ) : (
+                  <i className="ach-ico-lock">🔒</i>
+                )}
+              </button>
             );
           })}
         </div>
+        <p className="ach-tip">点一下图标，看看这项成就的进度。</p>
       </div>
 
       <div className="card">
@@ -231,6 +234,44 @@ export function Profile({ game }: Props) {
       </button>
 
       <p className="version">象棋学堂 v1.1 · 离线可用 · 规则引擎内置</p>
+
+      {selAch &&
+        (() => {
+          const a = ACHIEVEMENTS.find((x) => x.id === selAch);
+          if (!a) return null;
+          const claimed = achievementClaimed(progress, a);
+          const got = Math.min(a.goal, a.value(progress));
+          const pct = Math.min(100, Math.round((got / a.goal) * 100));
+          return (
+            <Sheet
+              open
+              title={
+                <span className="ach-sheet-title">
+                  <span className="ach-sheet-emoji">{a.emoji}</span>
+                  {a.name}
+                </span>
+              }
+              onClose={() => setSelAch(null)}
+              closeLabel={null}
+            >
+              <p className="sheet-note">{a.desc}</p>
+              <div className="ach-sheet-bar">
+                <div style={{ width: `${pct}%` }} />
+              </div>
+              <div className="ach-sheet-meta">
+                <span>
+                  进度 {got}/{a.goal}
+                </span>
+                <span className={claimed ? 'claimed' : ''}>
+                  {claimed ? '✓ 已达成' : `💎 奖励 ${a.gems}`}
+                </span>
+              </div>
+              <button className="btn btn-primary" onClick={() => setSelAch(null)}>
+                知道了
+              </button>
+            </Sheet>
+          );
+        })()}
     </div>
   );
 }
