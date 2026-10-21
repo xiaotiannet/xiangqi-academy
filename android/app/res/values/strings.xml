@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">象棋学堂</string>
+    <string name="reminder_channel">每日提醒</string>
+    <string name="reminder_channel_desc">奥斯卡每天喊你下一盘</string>
+</resources>

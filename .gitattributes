@@ -1,0 +1,10 @@
+# 统一用 LF，避免 Windows 下 autocrlf 把整个仓库的换行改来改去
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp3 binary
+*.jks binary
+*.apk binary
+*.bat text eol=crlf

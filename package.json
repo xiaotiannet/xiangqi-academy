@@ -1,0 +1,31 @@
+{
+  "name": "xiangqi-academy",
+  "private": true,
+  "version": "1.6.0",
+  "type": "module",
+  "description": "象棋学堂 — 章节式中国象棋教学 + 人机对战",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && node scripts/clean-out.mjs dist && vite build",
+    "preview": "vite preview",
+    "validate:lessons": "esbuild scripts/validate-lessons.ts --bundle --platform=node --format=esm --outfile=.tmp/validate.mjs --log-level=error && node .tmp/validate.mjs",
+    "build:apk:web": "tsc --noEmit && node scripts/clean-out.mjs dist-mobile && vite build --config vite.apk.config.ts && node scripts/build-standalone.mjs",
+    "build:apk": "bash scripts/build-apk.sh",
+    "validate:openings": "esbuild scripts/validate-openings.ts --bundle --platform=node --format=esm --outfile=.tmp/validate-openings.mjs --log-level=error && node .tmp/validate-openings.mjs",
+    "validate:drills": "esbuild scripts/validate-drills.ts --bundle --platform=node --format=esm --outfile=.tmp/validate-drills.mjs --log-level=error && node .tmp/validate-drills.mjs",
+    "validate": "npm run validate:lessons && npm run validate:openings && npm run validate:drills",
+    "voice:collect": "esbuild scripts/collect-voice-lines.ts --bundle --platform=node --format=esm --outfile=.tmp/collect.mjs --log-level=error && node .tmp/collect.mjs",
+    "voice": "npm run --silent voice:collect && python scripts/make-voice.py"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}

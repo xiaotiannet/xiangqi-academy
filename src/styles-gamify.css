@@ -1,0 +1,1437 @@
+/* ============ 游戏化层：体力 / 宝石 / 等级 / 任务 / 奥斯卡 ============ */
+
+/* ---------- 顶部状态条 ---------- */
+.statbar {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  gap: 6px;
+  padding: 8px 0 10px;
+  margin: -16px -18px 12px;
+  padding-left: 14px;
+  padding-right: 14px;
+  background: linear-gradient(#fff 72%, rgba(255, 255, 255, 0));
+  backdrop-filter: blur(6px);
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: #f4f6f9;
+  border-radius: 12px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  white-space: nowrap;
+}
+.stat:active {
+  transform: scale(0.95);
+}
+.stat-ico {
+  font-size: 14px;
+  line-height: 1;
+}
+.stat b {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-fire {
+  background: #fff3e6;
+  color: #d97500;
+}
+.stat-gem {
+  background: #e9f6ff;
+  color: #0f86bd;
+}
+.stat-energy {
+  background: #ffeef0;
+  color: #d63850;
+}
+.stat-energy.is-low {
+  animation: lowPulse 1.6s ease-in-out infinite;
+}
+@keyframes lowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 75, 75, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 75, 75, 0.14);
+  }
+}
+.stat-sub {
+  font-size: 10px;
+  opacity: 0.65;
+  font-weight: 700;
+}
+.stat-level {
+  margin-left: auto;
+  background: #f3ecff;
+  color: #7a3fd1;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  padding: 3px 9px;
+}
+.stat-level small {
+  font-size: 9px;
+  font-weight: 700;
+  opacity: 0.7;
+}
+.lv-badge {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- 奥斯卡与气泡 ---------- */
+.oscar-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.oscar-avatar {
+  flex: 0 0 auto;
+  cursor: pointer;
+  filter: drop-shadow(0 6px 10px rgba(214, 52, 44, 0.14));
+  transition: transform 0.18s ease;
+}
+.oscar-avatar:active {
+  transform: scale(1.06) rotate(-3deg);
+}
+.bubble {
+  position: relative;
+  flex: 1;
+  background: #fff;
+  border: 2px solid #eef0f3;
+  border-radius: 16px 16px 16px 4px;
+  padding: 10px 12px;
+  box-shadow: 0 3px 0 #f0f2f5;
+}
+.bubble p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  font-weight: 600;
+}
+.bubble-say {
+  margin-top: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ---------- 今日目标 + 宝箱 ---------- */
+.goal-card {
+  background: #fff;
+  border: 2px solid #eef0f3;
+  border-radius: 16px;
+  padding: 12px 14px 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 3px 0 #f0f2f5;
+}
+.goal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 7px;
+}
+.goal-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink);
+}
+.goal-num {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.chest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 2px dashed #e7dfd2;
+  border-radius: 13px;
+  background: #fffdf6;
+  cursor: pointer;
+  text-align: left;
+}
+.chest.is-ready {
+  border-style: solid;
+  border-color: #ffd166;
+  background: linear-gradient(180deg, #fff8e2, #fff2cf);
+  animation: chestGlow 2.4s ease-in-out infinite;
+}
+@keyframes chestGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 200, 0, 0.24);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 200, 0, 0.08);
+  }
+}
+.chest-ico {
+  font-size: 22px;
+}
+.chest-text {
+  display: flex;
+  flex-direction: column;
+}
+.chest-text b {
+  font-size: 12.5px;
+  color: #8a5a00;
+}
+.chest-text small {
+  font-size: 10.5px;
+  color: #b08c56;
+}
+
+/* ---------- 每日任务 ---------- */
+.quest-card {
+  background: #fff;
+  border: 2px solid #eef0f3;
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 0 #f0f2f5;
+}
+.quest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid #f3f4f6;
+}
+.quest:first-of-type {
+  border-top: 0;
+}
+.quest-emoji {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: #f6f7f9;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.quest-main {
+  flex: 1;
+  min-width: 0;
+}
+.quest-label {
+  font-size: 12.5px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.quest-bar {
+  height: 6px;
+  background: #eff1f4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.quest-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+  transition: width 0.3s ease;
+}
+.quest-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.quest-count {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 800;
+}
+.quest-claim {
+  border: 0;
+  border-radius: 10px;
+  padding: 6px 9px;
+  font-size: 11px;
+  font-weight: 900;
+  background: #f1f2f5;
+  color: #a6adb8;
+  cursor: default;
+  white-space: nowrap;
+}
+.quest-claim.is-ready {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 0 var(--green-dark);
+  cursor: pointer;
+}
+.quest-claim.is-done {
+  background: #e8f8d8;
+  color: var(--green-dark);
+}
+
+/* ---------- 课程内体力 ---------- */
+.lesson-hearts {
+  font-size: 10px;
+  letter-spacing: -1px;
+  margin: 0 6px;
+  white-space: nowrap;
+}
+.result-oscar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fffdf6;
+  border: 2px dashed #f0e2c6;
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin: 10px 0 14px;
+  text-align: left;
+}
+.result-oscar p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7a6444;
+  font-weight: 700;
+}
+.play-gains {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px 0 16px;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--ink);
+}
+.play-gains .lost-heart {
+  color: var(--red-dark);
+}
+
+/* ---------- 底部弹层 ---------- */
+.sheet-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(20, 24, 32, 0.42);
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.18s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+.sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 22px 22px 0 0;
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  animation: sheetUp 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  max-height: 82%;
+  overflow-y: auto;
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(60%);
+  }
+}
+.sheet-grip {
+  width: 42px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e3e5e9;
+  margin: 4px auto 10px;
+}
+.sheet-title {
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+.sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sheet-close {
+  width: 100%;
+  margin-top: 14px;
+  border: 2px solid #e7e9ee;
+  background: #fff;
+  border-radius: 14px;
+  padding: 11px;
+  font-weight: 900;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.wallet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.wallet-cell {
+  background: #f7f8fa;
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+}
+.wallet-cell b {
+  display: block;
+  font-size: 18px;
+}
+.wallet-cell span {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.wallet-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.wallet-tip {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+.level-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.level-hero b {
+  font-size: 15px;
+}
+.level-hero p {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* ---------- 成就 ---------- */
+.ach-list {
+  display: flex;
+  flex-direction: column;
+}
+.ach {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid #f3f4f6;
+}
+.ach:first-child {
+  border-top: 0;
+}
+.ach-emoji {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: #f6f7f9;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.ach.is-done .ach-emoji,
+.ach.is-ready .ach-emoji {
+  filter: none;
+  opacity: 1;
+  background: #fff6de;
+}
+.ach-main {
+  flex: 1;
+  min-width: 0;
+}
+.ach-main b {
+  font-size: 12.5px;
+}
+.ach-main small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.ach-bar {
+  height: 4px;
+  background: #eff1f4;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+.ach-bar div {
+  height: 100%;
+  background: var(--yellow);
+}
+.ach-right {
+  text-align: right;
+  min-width: 44px;
+}
+.ach-right small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 800;
+}
+.ach-badge {
+  color: var(--green);
+  font-weight: 900;
+}
+.ach-gem {
+  font-size: 11px;
+  font-weight: 900;
+  color: #0f86bd;
+}
+
+/* ---------- 等级卡 ---------- */
+.level-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #7a3fd1, #a86bff);
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: #fff;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 0 #5d2ba6;
+}
+.level-ring {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+.level-ring span {
+  font-size: 15px;
+  line-height: 1.1;
+}
+.level-ring small {
+  font-size: 9px;
+  opacity: 0.9;
+}
+.level-info {
+  flex: 1;
+}
+.level-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  overflow: hidden;
+}
+.level-bar-fill {
+  height: 100%;
+  background: #ffe28a;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.level-info p {
+  margin: 6px 0 0;
+  font-size: 11px;
+  opacity: 0.92;
+  font-weight: 700;
+}
+
+/* ---------- 小时选择 ---------- */
+.hour-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0 2px;
+  flex-wrap: wrap;
+}
+.hour-row > span {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.hour-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.hour-chip {
+  border: 2px solid #eceef2;
+  background: #fff;
+  border-radius: 10px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.hour-chip.on {
+  border-color: var(--blue);
+  background: #e9f6ff;
+  color: var(--blue-dark);
+}
+.setting-note {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+.toggle-row.sub {
+  padding-top: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.toggle-row.sub > span:first-child {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.mini-link {
+  font-size: 11.5px;
+  color: var(--blue);
+  font-weight: 800;
+}
+.oscar-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 10px;
+  background: #fffdf6;
+  border: 2px dashed #f0e2c6;
+  border-radius: 16px;
+  padding: 8px 12px;
+}
+.oscar-footer p {
+  margin: 0;
+  font-size: 12px;
+  color: #7a6444;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* ---------- 庆祝弹窗 ---------- */
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(16, 20, 28, 0.5);
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.2s ease;
+}
+.celebration-card {
+  position: relative;
+  width: min(340px, 100%);
+  background: #fff;
+  border-radius: 24px;
+  padding: 18px 20px 20px;
+  text-align: center;
+  box-shadow: 0 22px 50px rgba(18, 26, 42, 0.28);
+  animation: popIn 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.86) translateY(14px);
+    opacity: 0;
+  }
+}
+.celebration-oscar {
+  margin: -46px auto 4px;
+  width: 104px;
+  height: 104px;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.14));
+}
+.celebration-eyebrow {
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.celebration-big {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 4px 0 2px;
+  color: var(--purple);
+  font-variant-numeric: tabular-nums;
+}
+.celebration-big.is-emoji {
+  font-size: 46px;
+}
+.celebration-sub {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.celebration-gains {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+.celebration-card .btn {
+  width: 100%;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti span {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation-name: confettiFall;
+  animation-timing-function: cubic-bezier(0.3, 0.6, 0.6, 1);
+  animation-iteration-count: infinite;
+}
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(560deg);
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti span,
+  .chest.is-ready,
+  .stat-energy.is-low {
+    animation: none;
+  }
+}
+
+/* ============ 复盘 ============ */
+
+.review-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.review-title {
+  flex: 1;
+  min-width: 0;
+}
+.review-title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+.review-title p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.review-badge {
+  background: #f1f3f5;
+  border-radius: 10px;
+  padding: 5px 9px;
+  font-size: 11.5px;
+  font-weight: 900;
+  color: var(--ink-soft);
+  flex: 0 0 auto;
+}
+.analyze-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fffdf6;
+  border-color: #f0e2c6;
+}
+.analyze-main {
+  flex: 1;
+  min-width: 0;
+}
+.analyze-main b {
+  font-size: 13px;
+  display: block;
+  margin-bottom: 6px;
+}
+.analyze-main small {
+  display: block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.review-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+.review-strip .move-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 2px solid transparent;
+  transition: transform 0.12s ease;
+}
+.review-strip .move-chip.is-current {
+  box-shadow: 0 0 0 2px rgba(88, 204, 2, 0.35);
+  transform: translateY(-1px);
+}
+.q-dot {
+  font-style: normal;
+  font-size: 8.5px;
+  line-height: 1;
+  color: #fff;
+  border-radius: 999px;
+  padding: 1.5px 3px;
+  font-weight: 900;
+}
+.review-score {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+.review-acc {
+  text-align: center;
+  background: #f4f9ee;
+  border-radius: 16px;
+  padding: 8px 14px;
+}
+.review-acc b {
+  display: block;
+  font-size: 24px;
+  color: var(--green-dark);
+  line-height: 1.1;
+}
+.review-acc span {
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  font-weight: 800;
+}
+.review-counts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  flex: 1;
+}
+.rc {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding-left: 8px;
+  border-left: 3px solid transparent;
+  color: var(--ink-soft);
+}
+.rc.best {
+  border-color: #58cc02;
+}
+.rc.inacc {
+  border-color: #ffc800;
+}
+.rc.miss {
+  border-color: #ff9600;
+}
+.rc.blunt {
+  border-color: #ff4b4b;
+}
+
+/* ============ 开局库 ============ */
+
+.opening-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.opening-card {
+  text-align: left;
+  border: 2px solid #eef0f3;
+  border-radius: 16px;
+  background: #fff;
+  padding: 13px 14px;
+  box-shadow: 0 3px 0 #f0f2f5;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.opening-card:active {
+  transform: scale(0.985);
+}
+.opening-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.opening-head b {
+  font-size: 15px;
+  font-weight: 900;
+}
+.opening-tag {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--blue-dark);
+  background: #e9f6ff;
+  border-radius: 8px;
+  padding: 3px 7px;
+}
+.opening-card p {
+  margin: 7px 0 9px;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.opening-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.opening-line {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.opening-go {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--green-dark);
+  flex: 0 0 auto;
+}
+.opening-move {
+  margin: 4px 0 8px;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #b3261e;
+}
+.opening-note {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.opening-idea {
+  margin: 6px 0 10px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.opening-points {
+  margin: 0;
+  padding-left: 18px;
+}
+.opening-points li {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+/* 控制条上的消耗标记 */
+.ctl-cost {
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 900;
+  color: #b3261e;
+  letter-spacing: 0.2px;
+  opacity: 0.85;
+  margin-top: -1px;
+}
+.ctl:disabled .ctl-cost {
+  color: var(--muted);
+}
+
+/* 对局头部：开启悔棋时显示体力 */
+.play-hearts {
+  margin-left: auto;
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #d1495b;
+  background: #fff1f3;
+  border-radius: 999px;
+  padding: 4px 10px;
+  flex: 0 0 auto;
+}
+.play-head .turn-flag {
+  margin-left: 6px;
+}
+
+/* ============ 对局顶部 HUD：吃子分 + 倒计时 ============ */
+
+.play {
+  padding-top: 8px;
+}
+
+.play-top {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0 6px;
+}
+
+.play-exit {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #a3aab2;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.play-exit:active {
+  background: #f1f3f5;
+}
+
+.play-hud {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  height: 34px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: #fff;
+  box-shadow: 0 2px 0 var(--line);
+  overflow: hidden;
+}
+
+.hud-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 100%;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.hud-cell b {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.hud-cell i {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.hud-div {
+  width: 1px;
+  height: 18px;
+  background: var(--line);
+}
+
+.hud-cell.urgent {
+  color: var(--red-dark);
+  animation: hudPulse 1s ease-in-out infinite;
+}
+
+@keyframes hudPulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ============ 奥斯卡舞台：大图 + 气泡 ============ */
+
+/* 高度写死：台词长短不一时，棋盘不会上下漂 */
+.battle-stage {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  height: 86px;
+  padding: 2px 0 3px;
+}
+
+.oscar-figure {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  animation: oscarFloat 3.6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 6px rgba(160, 110, 40, 0.16));
+}
+
+.battle-stage.thinking .oscar-figure {
+  animation-duration: 1.15s;
+}
+
+@keyframes oscarFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
+}
+
+.oscar-bubble {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 76px;
+  margin-bottom: 7px;
+  padding: 7px 11px 8px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-family: inherit;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 0 var(--line);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.oscar-bubble::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  bottom: 12px;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border-left: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  border-bottom-left-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.oscar-bubble:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--line);
+}
+
+.bubble-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 1px;
+  flex: 0 0 auto;
+}
+
+.bubble-top b {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.bubble-diff {
+  font-size: 10px;
+  font-weight: 900;
+  color: #a06a00;
+  background: #fff4d6;
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.bubble-score {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 900;
+  color: var(--green-dark);
+}
+
+.bubble-text {
+  flex: 1 1 auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.36;
+  color: var(--ink-soft);
+}
+
+/* 计时未启动：数字压暗，表示还没开始跑 */
+.hud-cell.idle b {
+  color: #c3c7cc;
+}
+
+/* 对局页压缩纵向留白，把空间让给棋盘 */
+.play .board-wrap {
+  padding: 4px 0 8px;
+}
+
+.play .move-strip {
+  min-height: 30px;
+  padding: 4px 2px 6px;
+}
+
+.player-bar.me .play-hearts {
+  margin-left: auto;
+}
+
+.player-bar.me .turn-flag {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.player-bar.me .play-hearts + .turn-flag {
+  margin-left: 6px;
+}
+
+/* 结算：超时判定提示 */
+.overlay-tag {
+  margin: -6px auto 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff4d6;
+  color: #a06a00;
+  font-size: 11.5px;
+  font-weight: 900;
+}
+
+/* 底部只留悔棋/提示，单个按钮时收窄居中，避免又宽又容易误触 */
+.play-controls.solo {
+  justify-items: center;
+}
+
+.play-controls.solo .ctl {
+  width: 100%;
+  max-width: 180px;
+}
+
+/* 开局说明：随机执子 + 计时规则 */
+.setup-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 2px dashed #d7e6f7;
+  background: #f6faff;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.setup-tip b {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+/* 退出确认弹层 */
+.sheet-note {
+  margin: 0 0 2px;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.sheet-link {
+  margin-top: 2px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+/* ============ 走子动画 ============ */
+
+/* 棋子从起点滑到落点：320ms，落地前有一点点回弹的“压手感” */
+.piece.piece-slide {
+  animation: pieceSlide 320ms cubic-bezier(0.24, 0.72, 0.26, 1);
+  will-change: transform;
+}
+
+@keyframes pieceSlide {
+  0% {
+    transform: translate(var(--dx, 0px), var(--dy, 0px));
+  }
+  78% {
+    transform: translate(calc(var(--dx, 0px) * -0.035), calc(var(--dy, 0px) * -0.035));
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* 吃子爆点：落点上炸开一圈 */
+.capture-burst {
+  animation: captureBurst 480ms ease-out forwards;
+  transform-box: view-box;
+  pointer-events: none;
+}
+
+@keyframes captureBurst {
+  0% {
+    opacity: 0.95;
+    transform: scale(0.5);
+  }
+  55% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+/* 对局中的奥斯卡头像 */
+.avatar.avatar-oscar {
+  background: #fff8e7;
+  border: 2px solid #f2e3c4;
+  overflow: hidden;
+}
+
+/* ============ 单元末的吃子冲刺 ============ */
+
+.node-drill::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 3px dashed rgba(255, 200, 0, 0.75);
+  animation: drillSpin 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes drillSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.node-timer {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 12px;
+  box-shadow: 0 2px 5px rgba(23, 43, 77, 0.16);
+}
+
+.node-sub {
+  display: block;
+  margin-top: 1px;
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #b98a00;
+}
+
+.drill {
+  padding-top: 8px;
+}
+
+.drill-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 2px 8px;
+}
+
+.drill-head b {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.drill-head span {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.drill-ico {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.drill-tip {
+  margin-top: 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.drill-rule {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.drill-stars {
+  font-size: 26px;
+  letter-spacing: 4px;
+  color: var(--yellow);
+  text-shadow: 0 2px 0 rgba(180, 120, 0, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piece.piece-slide,
+  .capture-burst,
+  .oscar-figure,
+  .hud-cell.urgent,
+  .node-drill::after {
+    animation: none;
+  }
+}
