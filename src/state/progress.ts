@@ -32,6 +32,29 @@ export interface LessonRecord {
   at: number;
 }
 
+/** 一局棋里的一手（只存复盘需要的最小信息） */
+export interface MatchPly {
+  from: number;
+  to: number;
+  notation: string;
+  color: 'r' | 'b';
+}
+
+/** 对战记录：时间 / 输赢 / 执子 / 整局着法（用于复盘） */
+export interface MatchRecord {
+  id: string;
+  at: number;
+  result: 'win' | 'lose' | 'draw';
+  level: string;
+  side: 'r' | 'b';
+  /** 超时按残局子力判定的那局 */
+  timeout: boolean;
+  plies: MatchPly[];
+}
+
+/** 最多留这么多局，超过丢最老的（每局要存完整着法） */
+export const MATCH_KEEP = 12;
+
 export interface Settings {
   sound: boolean;
   voice: boolean;
@@ -64,6 +87,8 @@ export interface ProgressState {
   lastDay: string;
   days: Record<string, number>;
   vsAi: { win: number; lose: number; draw: number };
+  /** 最近的对战记录（新的在前），供复盘 */
+  matches: MatchRecord[];
   quests: DailyState;
   claimedAch: Record<string, number>;
   chestDay: string;
@@ -338,6 +363,7 @@ export function defaultProgress(): ProgressState {
     lastDay: '',
     days: {},
     vsAi: { win: 0, lose: 0, draw: 0 },
+    matches: [],
     quests: emptyQuests(),
     claimedAch: {},
     chestDay: '',
@@ -367,6 +393,7 @@ export function loadProgress(): ProgressState {
       lessons: parsed.lessons ?? {},
       days: parsed.days ?? {},
       claimedAch: parsed.claimedAch ?? {},
+      matches: Array.isArray(parsed.matches) ? parsed.matches : [],
       quests: { ...emptyQuests(), ...(parsed.quests ?? {}) },
     };
     return syncEnergy(merged).state;
@@ -479,6 +506,12 @@ export function awardLesson(
     quests: { ...src.quests, lessons: src.quests.lessons + 1 },
   };
   return { state: next, reward: makeReward(src, gained, gems, { stars: opts.stars }), first };
+}
+
+/** 记一局对战（新的排在最前，超出 MATCH_KEEP 的丢掉） */
+export function addMatch(p: ProgressState, rec: Omit<MatchRecord, 'id'>): ProgressState {
+  const item: MatchRecord = { ...rec, id: `${rec.at}-${Math.random().toString(36).slice(2, 7)}` };
+  return { ...p, matches: [item, ...(p.matches ?? [])].slice(0, MATCH_KEEP) };
 }
 
 export function awardGame(

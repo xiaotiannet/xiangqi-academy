@@ -26,7 +26,11 @@ export default function App() {
   const game = useGame();
   const [tab, setTab] = useState<Tab>('learn');
   const [lessonId, setLessonId] = useState<string | null>(null);
-  const [review, setReview] = useState<{ history: Ply[]; side: Color } | null>(null);
+  const [review, setReview] = useState<{
+    history: Ply[];
+    side: Color;
+    result?: 'win' | 'lose' | 'draw';
+  } | null>(null);
   const { think, evaluate } = useEngine();
 
   /** 对局是否正在进行（由 Play 上报），用于拦截返回键 / 切页，避免静默丢棋局 */
@@ -102,6 +106,7 @@ export default function App() {
         <ReviewView
           history={review.history}
           side={review.side}
+          result={review.result}
           evaluate={evaluate}
           onExit={() => setReview(null)}
         />
@@ -164,7 +169,9 @@ export default function App() {
             think={think}
             onResult={(r: PlayResult) => game.finishGame(r.result)}
             onSpendGems={game.spendGems}
-            onReview={(history, side) => setReview({ history, side })}
+            onReview={(history, side, res) => setReview({ history, side, result: res })}
+            matches={game.progress.matches ?? []}
+            onRecordMatch={game.recordMatch}
             backSignal={leaveSignal}
             onActiveChange={setPlayActive}
           />

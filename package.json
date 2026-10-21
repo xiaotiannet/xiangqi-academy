@@ -1,7 +1,7 @@
 {
   "name": "xiangqi-academy",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.7.1",
   "type": "module",
   "description": "象棋学堂 — 章节式中国象棋教学 + 人机对战",
   "scripts": {

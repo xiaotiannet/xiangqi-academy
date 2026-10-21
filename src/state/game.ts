@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ACHIEVEMENTS,
   achievementClaimed,
+  addMatch,
   achievementDone,
   awardGame,
   awardLesson,
@@ -18,6 +19,7 @@ import {
   resetProgress,
   saveProgress,
   syncEnergy,
+  type MatchRecord,
   type ProgressState,
   type Reward,
   type Settings,
@@ -114,6 +116,14 @@ export function useGame() {
     [commit],
   );
 
+  /** 对局结束后落一条记录，对战页可以直接点开复盘 */
+  const recordMatch = useCallback(
+    (rec: Omit<MatchRecord, 'id'>) => {
+      apply(addMatch(ref.current, rec));
+    },
+    [apply],
+  );
+
   const loseOneHeart = useCallback((): { energy: number; empty: boolean } => {
     const { state, energy, empty } = loseHeart(ref.current);
     apply(state);
@@ -180,6 +190,7 @@ export function useGame() {
     level: lv,
     finishLesson,
     finishGame,
+    recordMatch,
     loseOneHeart,
     refill,
     addCorrect,

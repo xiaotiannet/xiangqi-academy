@@ -30,7 +30,7 @@ import {
   type Line,
 } from '../content/oscar';
 import { buzz, voice } from '../state/native';
-import { HINT_COST, type Reward } from '../state/progress';
+import { HINT_COST, type MatchRecord, type Reward } from '../state/progress';
 import { Sheet } from '../components/Sheet';
 
 declare global {
@@ -94,7 +94,11 @@ interface Props {
   think: (pos: Position, level: Level) => Promise<ThinkResult | null>;
   onResult: (r: PlayResult) => Reward;
   onSpendGems: (n: number) => boolean;
-  onReview: (history: Ply[], side: Color) => void;
+  onReview: (history: Ply[], side: Color, result?: 'win' | 'lose' | 'draw') => void;
+  /** 最近的对战记录（新的在前） */
+  matches: MatchRecord[];
+  /** 一局结束时落记录，供对战页直接复盘 */
+  onRecordMatch: (rec: Omit<MatchRecord, 'id'>) => void;
   /** 外部请求离开（安卓返回手势 / 切换底部标签），值变化即触发一次 */
   backSignal?: number;
   /** 上报「对局进行中」，让外层据此拦截返回键 */
@@ -119,6 +123,8 @@ export function Play({
   onResult,
   onSpendGems,
   onReview,
+  matches,
+  onRecordMatch,
   backSignal = 0,
   onActiveChange,
 }: Props) {
@@ -147,6 +153,8 @@ export function Play({
   const level = LEVELS.find((l) => l.id === levelId) ?? LEVELS[0];
   const gameRef = useRef(0);
   const startedRef = useRef(false);
+  /** 与 history 同步的镜像：finish 里要拿「含最后一手」的完整着法存档 */
+  const historyRef = useRef<Ply[]>([]);
   const lastQuipAt = useRef(0);
   const animSeq = useRef(0);
   const deadlineRef = useRef(0);
@@ -184,6 +192,7 @@ export function Play({
     setLeaveOpen(false);
     setPos(initialPosition());
     setHistory([]);
+    historyRef.current = [];
     setSelected(null);
     setLastMove(null);
     setResult(null);
@@ -268,9 +277,17 @@ export function Play({
   }, [backSignal]);
 
   const finish = useCallback(
-    (res: 'win' | 'lose' | 'draw', pool?: Line[]) => {
+    (res: 'win' | 'lose' | 'draw', pool?: Line[], timeout = false) => {
       if (finishedRef.current) return;
       finishedRef.current = true;
+      onRecordMatch({
+        at: Date.now(),
+        result: res,
+        level: levelId,
+        side,
+        timeout,
+        plies: historyRef.current,
+      });
       setLeaveOpen(false);
       setResult(res);
       const rw = onResult({ result: res, level: levelId });
@@ -284,7 +301,7 @@ export function Play({
       if (res === 'win') sfx.win();
       else if (res === 'lose') sfx.lose();
     },
-    [levelId, onResult],
+    [levelId, onResult, onRecordMatch, side],
   );
 
   const commit = useCallback(
@@ -311,7 +328,8 @@ export function Play({
 
       setPos(next);
       setLastMove({ from, to });
-      setHistory((h) => [...h, { from, to, notation, color: current.turn }]);
+      historyRef.current = [...historyRef.current, { from, to, notation, color: current.turn }];
+      setHistory(historyRef.current);
       setHint(null);
       const st = getStatus(next);
       if (st.status !== 'playing') {
@@ -355,7 +373,7 @@ export function Play({
     const his = materialOf(pos.squares, other(side));
     const res: 'win' | 'lose' | 'draw' = mine > his ? 'win' : mine < his ? 'lose' : 'draw';
     setEndReason('timeout');
-    finish(res, res === 'win' ? TIMEOUT_WIN : res === 'lose' ? TIMEOUT_LOSE : TIMEOUT_DRAW);
+    finish(res, res === 'win' ? TIMEOUT_WIN : res === 'lose' ? TIMEOUT_LOSE : TIMEOUT_DRAW, true);
   }, [remaining, stage, result, clockOn, paused, pos.squares, side, finish]);
 
   // AI 回合
@@ -462,7 +480,8 @@ export function Play({
     let p = initialPosition();
     for (let k = 0; k < keep; k++) p = applyMove(p, history[k].from, history[k].to);
     setPos(p);
-    setHistory(history.slice(0, keep));
+    historyRef.current = history.slice(0, keep);
+    setHistory(historyRef.current);
     setLastMove(keep > 0 ? { from: history[keep - 1].from, to: history[keep - 1].to } : null);
     setSelected(null);
     setHint(null);
@@ -550,6 +569,39 @@ export function Play({
           <button className="btn btn-ghost" onClick={() => setStage('playing')}>
             返回当前对局
           </button>
+        )}
+
+        {matches.length > 0 && (
+          <div className="card match-card">
+            <div className="card-eyebrow">对战记录</div>
+            <div className="match-list">
+              {matches.map((m) => (
+                <button
+                  key={m.id}
+                  className="match-row"
+                  onClick={() => {
+                    sfx.tap();
+                    onReview(m.plies, m.side, m.result);
+                  }}
+                >
+                  <span className={`match-res ${m.result}`}>
+                    {m.result === 'win' ? '胜' : m.result === 'lose' ? '负' : '和'}
+                  </span>
+                  <span className="match-main">
+                    <b>
+                      {matchTime(m.at)} · {m.side === 'r' ? '执红' : '执黑'}
+                    </b>
+                    <small>
+                      {levelName(m.level)} · {m.plies.length} 手
+                      {m.timeout ? ' · 超时判定' : ''}
+                    </small>
+                  </span>
+                  <span className="match-go">复盘 ›</span>
+                </button>
+              ))}
+            </div>
+            <p className="match-note">点任意一局，奥斯卡带你逐手回看。</p>
+          </div>
         )}
       </div>
     );
@@ -733,7 +785,7 @@ export function Play({
             <button className="btn btn-primary" onClick={() => resetTo()}>
               再来一局
             </button>
-            <button className="btn btn-ghost" onClick={() => onReview(history, side)}>
+            <button className="btn btn-ghost" onClick={() => onReview(history, side, result ?? undefined)}>
               🔍 复盘本局
             </button>
             <button className="btn btn-ghost" onClick={() => setStage('setup')}>
@@ -747,3 +799,18 @@ export function Play({
     </div>
   );
 }
+
+/** 记录时间：今天/昨天只写时分，更早写月日 */
+function matchTime(ts: number): string {
+  const d = new Date(ts);
+  const hm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const now = new Date();
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  if (sameDay(d, now)) return `今天 ${hm}`;
+  const y = new Date(now.getTime() - 86400000);
+  if (sameDay(d, y)) return `昨天 ${hm}`;
+  return `${d.getMonth() + 1}-${d.getDate()} ${hm}`;
+}
+
+const levelName = (id: string): string => LEVELS.find((l) => l.id === id)?.name ?? '对战';
