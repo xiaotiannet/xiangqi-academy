@@ -1777,7 +1777,936 @@ const u5l4: Lesson = {
   ],
 };
 
-/* ---------- 单元末的限时吃子冲刺 ---------- */
+// ─────────────────────────────────────────────
+// 第一单元补：棋盘规则进阶
+// ─────────────────────────────────────────────
+
+const board2: Lesson = {
+  id: 'board2',
+  title: '河界与过河',
+  summary: '一条河，改变三种子的命运',
+  icon: '🌊',
+  xp: 10,
+  steps: [
+    {
+      kind: 'info',
+      title: '河界不是装饰',
+      body: '棋盘中间的「楚河汉界」把战场分成两半。棋子过了河，走法会变：兵、卒过河后可以左右横走；相、象永远不能过河；车马炮过河与否走法不变。',
+      layout: START,
+      turn: 'r',
+      tip: '记住一句话：过河改变的是兵，不改变的是车马炮。',
+    },
+    {
+      kind: 'choice',
+      question: '哪种棋子过河之后走法会发生改变？',
+      layout: START,
+      options: [
+        { text: '兵 / 卒', correct: true },
+        { text: '车' },
+        { text: '马' },
+      ],
+      explain: '只有兵、卒过河后可以横着走。车马炮在河哪边都一样走。',
+    },
+    {
+      kind: 'choice',
+      question: '一个已经过河的红兵，可以往回（朝自己底线）走吗？',
+      layout: START,
+      options: [
+        { text: '不可以，兵永远不能后退', correct: true },
+        { text: '可以，过河后自由走' },
+        { text: '可以，但要消耗一步' },
+      ],
+      explain: '兵过河后能向前、能左右，但永远不能后退。所以推兵之前要想清楚：这一步回不了头。',
+    },
+  ],
+};
+
+const board3: Lesson = {
+  id: 'board3',
+  title: '怎么算赢',
+  summary: '将死、困毙与和棋',
+  icon: '🏁',
+  xp: 10,
+  steps: [
+    {
+      kind: 'info',
+      title: '三种结局',
+      body: '将死：对方的将帅被将军，而且无论怎么应都逃不掉。困毙：对方没有被将军，但一步合法棋都走不出来（也算输）。和棋：双方都无法取胜，或者出现循环重复的局面。',
+      layout: START,
+      turn: 'r',
+      tip: '初学只要盯住一件事：让对方没有「应将」的办法。',
+    },
+    {
+      kind: 'choice',
+      question: '「困毙」和「将死」的区别是什么？',
+      layout: START,
+      options: [
+        { text: '困毙时没有被将军，但已无棋可走', correct: true },
+        { text: '困毙是双方都没子了' },
+        { text: '两者完全一样' },
+      ],
+      explain: '将死是「正在被将军且无法解」，困毙是「没被将军但一步也走不了」。在中国象棋里两者都判负。',
+    },
+    {
+      kind: 'choice',
+      question: '下面哪种情况算和棋？',
+      layout: START,
+      options: [
+        { text: '双方都只剩将帅等无法取胜的子力', correct: true },
+        { text: '一方主动认输' },
+        { text: '一方超时' },
+      ],
+      explain: '子力不足、无法构成杀棋时判和。认输和超时都是分出胜负的情况。',
+    },
+  ],
+};
+
+const board4: Lesson = {
+  id: 'board4',
+  title: '记谱入门',
+  summary: '看懂「炮二平五」这种写法',
+  icon: '✍️',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '四个字说清一步棋',
+      body: '中文记谱是「棋子 + 起点竖线 + 动作 + 目标」：进（向前）、退（向后）、平（横走）。红方从右往左数一到九，黑方从左往右数一到九。所以「炮二平五」= 红炮从第 2 条线平移到第 5 条线。',
+      layout: START,
+      turn: 'r',
+      tip: '看课程下面的着法条就知道：每一步都会自动记成这样四个字。',
+    },
+    {
+      kind: 'choice',
+      question: '「马八进七」里的「进」表示？',
+      layout: START,
+      options: [
+        { text: '这步棋让马朝对方方向前进', correct: true },
+        { text: '吃掉对方的子' },
+        { text: '把马提到更靠前的线路' },
+      ],
+      explain: '进 / 退是相对自己方向说的：红方向前为进，黑方向前（朝下）也为进。',
+    },
+    {
+      kind: 'choice',
+      question: '红方「车一平四」和黑方「车１平４」，数竖线的方向？',
+      layout: START,
+      options: [
+        { text: '红方从右往左数，黑方从左往右数', correct: true },
+        { text: '双方都从左往右数' },
+        { text: '双方都从中间往两边数' },
+      ],
+      explain: '各自以自己的右手边为「一」。这样写谱时不用说明执哪方，四字就能定位。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第二单元：车
+// ─────────────────────────────────────────────
+
+const car1: Lesson = {
+  id: 'car1',
+  title: '车怎么吃子',
+  summary: '一条直线，吃到底',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '车吃子和走路是一个规矩',
+      body: '车沿横线或竖线走，路上不能有子；第一个挡在前面的子，就是它能吃掉的目标。这是全场唯一「走法和吃法完全一致」的大子。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+...k.....
+.........
+.........
+.........
+.........
+.........
+.r..R....
+.........
+.........
+....K....
+`),
+      turn: 'r',
+      prompt: '用红车吃掉黑车（同一横线，中间没有子）',
+      target: sq(6, 1),
+      hint: '红车在 (6,4)，黑车在 (6,1)，中间 (6,2)(6,3) 都是空的。',
+      explain: '车走直线，中间没有阻挡就能一路吃到底。这一口换下来是 9 分换 9 分，谁也不亏。',
+    },
+    {
+      kind: 'choice',
+      question: '车在棋盘正中央（没有任何子挡路），它最多能控制多少个方向的直线？',
+      layout: START,
+      options: [
+        { text: '四个方向：上、下、左、右', correct: true },
+        { text: '两个方向：只能横着走' },
+        { text: '八个方向：包括斜线' },
+      ],
+      explain: '车只有横竖四个方向，但每个方向都能走到底——这就是它成为最强子的原因。',
+    },
+  ],
+};
+
+const car2: Lesson = {
+  id: 'car2',
+  title: '车该站在哪',
+  summary: '开放线、二路车与车的死角',
+  icon: '📍',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '车喜欢「空」的地方',
+      body: '一条线上没有兵卒挡着，叫「开放线」，车放在那里威力最大。反过来，车最怕被自己的兵堵在家里——开局迟迟不出车，往往就是因为兵没动、线没开。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'choice',
+      question: '同样是车，放在哪里通常更有价值？',
+      layout: START,
+      options: [
+        { text: '没有兵卒阻挡的开放线上', correct: true },
+        { text: '紧贴自己底线的角落里' },
+        { text: '自己的九宫正中间' },
+      ],
+      explain: '车的力量来自「通路」。线被兵堵住，车再强也只能原地打转。',
+    },
+    {
+      kind: 'choice',
+      question: '下面哪种情况最让车难受？',
+      layout: START,
+      options: [
+        { text: '被对方的兵或马逼到边角，四面的路都被封住', correct: true },
+        { text: '站在棋盘正中央' },
+        { text: '和对方兑掉' },
+      ],
+      explain: '车怕「没路」。边角加封堵，是弱子困强子的经典手法。',
+    },
+  ],
+};
+
+const car3: Lesson = {
+  id: 'car3',
+  title: '车的小测',
+  summary: '三道题检验你对车的理解',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '车能斜着走吗？',
+      layout: START,
+      options: [
+        { text: '不能，只能走横线和竖线', correct: true },
+        { text: '能，但只能斜走一格' },
+        { text: '能，斜线和直线都行' },
+      ],
+      explain: '斜线是象、仕的领地。车只认横竖。',
+    },
+    {
+      kind: 'choice',
+      question: '车的路上有一个己方棋子挡着，车能越过去吃后面的敌子吗？',
+      layout: START,
+      options: [
+        { text: '不能，必须先把挡路的子移开', correct: true },
+        { text: '能，可以直接跳过去' },
+        { text: '能，但只能吃不能走' },
+      ],
+      explain: '车不是炮，没有「隔子」的特权。自己的子挡住，就只能先挪开。',
+    },
+    {
+      kind: 'choice',
+      question: '开局阶段，尽快把车放出来的常见做法是？',
+      layout: START,
+      options: [
+        { text: '先推动兵卒，把车所在的线打开', correct: true },
+        { text: '不断把车在底线左右挪动' },
+        { text: '把车调进九宫保护将帅' },
+      ],
+      explain: '开线 → 出车，是开局最基本的顺序。车在底线来回摆并不产生任何威胁。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第三单元：马
+// ─────────────────────────────────────────────
+
+const horse1: Lesson = {
+  id: 'horse1',
+  title: '马怎么吃子',
+  summary: '日字＋马腿，缺一不可',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '先看马腿，再看落点',
+      body: '马走「日」：先直一格，再斜出去一格。直的那一格叫马腿，被占住就往那个方向跳不了。所以马能不能吃到子，要同时满足两件事：落点有子、马腿是空的。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+.....k...
+.........
+.........
+.........
+.........
+...p.....
+.........
+....N....
+.........
+...K.....
+`),
+      turn: 'r',
+      prompt: '用红马吃掉黑卒',
+      target: sq(5, 3),
+      hint: '马在 (7,4)，往左上跳：马腿在 (6,4)，它是空的。',
+      explain: '从 (7,4) 到 (5,3) 是「竖走两格、横走一格」。马腿 (6,4) 空，所以跳得过去。',
+    },
+    {
+      kind: 'choice',
+      question: '马跳日字时，如果马腿位置站着一个棋子，会怎样？',
+      layout: START,
+      options: [
+        { text: '往这个方向的两个落点都跳不过去', correct: true },
+        { text: '只是不能吃子，仍然能走过去' },
+        { text: '可以把挡路的子吃掉' },
+      ],
+      explain: '一个马腿管着同侧的两个落点。挡住它，等于一次封掉马两条路。',
+    },
+  ],
+};
+
+const horse2: Lesson = {
+  id: 'horse2',
+  title: '马的强与弱',
+  summary: '马善走暗处，最怕靠边',
+  icon: '🐴',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '中心强，边线弱',
+      body: '马在中心最多能跳到八个落点，越靠边落点越少，贴到最边上就只剩两三个。所以有「马不临边」的说法：不到必要，别把马赶到边上。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'choice',
+      question: '马站在棋盘最中间，最多有几个落点？',
+      layout: START,
+      options: [
+        { text: '四个方向 × 两个落点，最多八个', correct: true },
+        { text: '永远只有四个' },
+        { text: '最多两个' },
+      ],
+      explain: '马在中心有 8 个落点，越往边角越少——这就是「马要活跃」的底层原因。',
+    },
+    {
+      kind: 'choice',
+      question: '对手想让你的一匹马彻底失去作用，最直接的办法是？',
+      layout: START,
+      options: [
+        { text: '用子占住它周围的马腿', correct: true },
+        { text: '把它的落点全部吃掉' },
+        { text: '用将帅去威胁它' },
+      ],
+      explain: '马腿是马的命门。占住关键马腿，马就成了院子里的雕像。',
+    },
+  ],
+};
+
+const horse3: Lesson = {
+  id: 'horse3',
+  title: '马的小测',
+  summary: '三道题检验你对马的理解',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '马从 (7,4) 跳到 (5,3)，走的是？',
+      layout: START,
+      options: [
+        { text: '竖两格、横一格，马腿在 (6,4)', correct: true },
+        { text: '斜着走两格' },
+        { text: '横两格、竖一格，马腿在 (7,3)' },
+      ],
+      explain: '马腿永远在「直两格」的那个方向上、紧挨着马的第一格。',
+    },
+    {
+      kind: 'choice',
+      question: '开局时把马跳到河边、又无处可去，主要问题是？',
+      layout: START,
+      options: [
+        { text: '马靠边后落点变少，容易变成废子', correct: true },
+        { text: '会被规则判为犯规' },
+        { text: '马过河就会消失' },
+      ],
+      explain: '马在边线只有两三个落点，很容易被对方用子封死。',
+    },
+    {
+      kind: 'choice',
+      question: '马和车比，谁更「灵活」？',
+      layout: START,
+      options: [
+        { text: '车更灵活：只要线通，一步就能到任意远处', correct: true },
+        { text: '马更灵活：能拐弯' },
+        { text: '两者完全一样' },
+      ],
+      explain: '马能拐弯绕过障碍，但一步只走一小段；车不能拐弯，却能在一条线上瞬间到底。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第四单元：炮
+// ─────────────────────────────────────────────
+
+const cannon1: Lesson = {
+  id: 'cannon1',
+  title: '炮怎么吃子',
+  summary: '走直线，隔一个子吃',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '炮是全棋盘最特别的一个',
+      body: '炮走子像车，但吃子必须「隔一个」：中间正好有一个子（敌我都行）当炮架，才能打掉架后面的子。隔零个不能吃，隔两个也吃不了。',
+      layout: START,
+      turn: 'r',
+      tip: '判断炮能不能吃，只数一件事：炮和目标之间有几个子。恰好一个，就能打。',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+...k.....
+.........
+.........
+....r....
+.........
+....P....
+.........
+....C....
+.........
+....K....
+`),
+      turn: 'r',
+      prompt: '用红炮打掉黑车（中间那枚红兵就是炮架）',
+      target: sq(3, 4),
+      hint: '炮在 (7,4)，黑车在 (3,4)，中间只有 (5,4) 的红兵一个子。',
+      explain: '炮隔着一个子把黑车打掉——这就是「隔山打牛」。红兵是炮架，打完还在原处。',
+    },
+    {
+      kind: 'choice',
+      question: '炮和黑车之间有两个子，炮能吃掉黑车吗？',
+      layout: START,
+      options: [
+        { text: '不能，必须恰好隔一个子', correct: true },
+        { text: '能，隔几个都行' },
+        { text: '能，只要其中一个是自己的子' },
+      ],
+      explain: '炮架必须正好一个。多了、少了都打不出去。',
+    },
+  ],
+};
+
+const cannon2: Lesson = {
+  id: 'cannon2',
+  title: '炮架的选择',
+  summary: '架子在哪，炮口就指向哪',
+  icon: '🎯',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '炮架可以是自己的子，也可以是对方的子',
+      body: '炮架不分敌我。有时候对方自己挡在中间，反而帮你架好了炮。所以摆炮的时候要算「线」和「架」，而不是只盯着炮本身。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'choice',
+      question: '想让炮打掉对方那条线上的车，但中间没有子，你会？',
+      layout: START,
+      options: [
+        { text: '想办法在那条线上放一个子当炮架', correct: true },
+        { text: '把炮挪到车旁边直接吃' },
+        { text: '放弃，炮本来就不能吃子' },
+      ],
+      explain: '炮不能近身肉搏，只能靠架子。要么自己送一个子过去，要么等对方送一个。',
+    },
+    {
+      kind: 'choice',
+      question: '炮被对方的子贴近贴身（相邻一格）时，炮能吃掉它吗？',
+      layout: START,
+      options: [
+        { text: '不能，中间没有架子', correct: true },
+        { text: '能，贴脸更好打' },
+        { text: '能，但只能吃一次' },
+      ],
+      explain: '这正是炮的软肋：近距离反而打不到。所以有「炮忌贴身」的说法。',
+    },
+  ],
+};
+
+const cannon3: Lesson = {
+  id: 'cannon3',
+  title: '炮的小测',
+  summary: '三道题检验你对炮的理解',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '炮「走」和「吃」的区别是？',
+      layout: START,
+      options: [
+        { text: '走的时候不隔子，吃的时候必须隔一个子', correct: true },
+        { text: '走的时候隔一个子，吃的时候不隔' },
+        { text: '两者都要隔一个子' },
+      ],
+      explain: '这是炮唯一容易记反的地方：不吃子时它就是个车，吃子时才需要炮架。',
+    },
+    {
+      kind: 'choice',
+      question: '炮架上放的是自己的子，会有什么额外好处？',
+      layout: START,
+      options: [
+        { text: '架子能顺带控制线路，撤走时炮口还能换线', correct: true },
+        { text: '没有任何好处，只会白送' },
+        { text: '可以让炮一次吃两个子' },
+      ],
+      explain: '架子灵活是炮的优点：架子一动，炮就换了条线，威胁随之转移。',
+    },
+    {
+      kind: 'choice',
+      question: '开局时把炮摆到中路，通常想做什么？',
+      layout: START,
+      options: [
+        { text: '控制中路，随时威胁对方的将帅与中兵', correct: true },
+        { text: '保护自己的兵不被动' },
+        { text: '准备和对方兑炮' },
+      ],
+      explain: '中炮是开局最直接的攻击姿态，威胁点就是对方的中路与将门。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第五单元：兵与卒
+// ─────────────────────────────────────────────
+
+const pawn1: Lesson = {
+  id: 'pawn1',
+  title: '兵怎么吃子',
+  summary: '只能向前，一口一格',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '兵的吃法和走法一样',
+      body: '兵一次走一格，只能朝前。吃子也是「正前方一格」——没有斜吃。所以兵的杀伤范围极小，但一步也不退。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+...k.....
+.........
+.........
+.........
+.........
+....p....
+....P....
+.........
+.........
+....K....
+`),
+      turn: 'r',
+      prompt: '用红兵吃掉正前方的黑卒',
+      target: sq(5, 4),
+      hint: '红兵在 (6,4)，正前方 (5,4) 就是黑卒。',
+      explain: '兵吃子必须是正前方一格。这一口吃完，红兵就过河了，从此可以左右横走。',
+    },
+    {
+      kind: 'choice',
+      question: '兵的吃子范围是？',
+      layout: START,
+      options: [
+        { text: '只吃正前方一格（过河后可横吃）', correct: true },
+        { text: '斜前方两格' },
+        { text: '周围一圈都能吃' },
+      ],
+      explain: '兵永远沿着横竖走，没有斜线。过河之后多了左右两个方向，仅此而已。',
+    },
+  ],
+};
+
+const pawn2: Lesson = {
+  id: 'pawn2',
+  title: '过河卒的威力',
+  summary: '一颗兵，能顶半个车',
+  icon: '🌊',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '过河之后就换了身份',
+      body: '兵过河前只能直愣愣地向前；一旦过河，可以左右横走，威胁面一下变大。靠近九宫的兵更可怕，能贴住将门、限制将帅的活动。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'choice',
+      question: '过河后的兵，最大的用处通常是？',
+      layout: START,
+      options: [
+        { text: '逼近九宫、限制对方将帅的活动', correct: true },
+        { text: '回去保护自己的将帅' },
+        { text: '和对方的车对换' },
+      ],
+      explain: '兵过河后不能回头，「护驾」这种活它干不了。它的价值在对方半场——尤其是贴着九宫的时候。',
+    },
+    {
+      kind: 'choice',
+      question: '为什么说「卒子过河顶大车」有点夸张但不算胡说？',
+      layout: START,
+      options: [
+        { text: '过河卒能横走、能贴将门，位置好时威胁很大', correct: true },
+        { text: '卒过河后分值真的变成 9 分' },
+        { text: '卒过河后可以斜着吃子' },
+      ],
+      explain: '分值上卒只有 1 分，但它能占住关键点、逼死将门。位置比分值更能说明问题。',
+    },
+  ],
+};
+
+const pawn3: Lesson = {
+  id: 'pawn3',
+  title: '兵的小测',
+  summary: '三道题检验你对兵的理解',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '一个还没过河的红兵，第一步可以走到哪些位置？',
+      layout: START,
+      options: [
+        { text: '只有正前方一格', correct: true },
+        { text: '前方一格和左右各一格' },
+        { text: '前方两格' },
+      ],
+      explain: '没过河只能直走一格。过河后才解锁左右。',
+    },
+    {
+      kind: 'choice',
+      question: '用一个兵去换对方一个兵，通常？',
+      layout: START,
+      options: [
+        { text: '不亏也不赚，但可能帮对方打开线路', correct: true },
+        { text: '一定大赚' },
+        { text: '规则不允许兵吃兵' },
+      ],
+      explain: '兵换兵分值持平，但兑掉之后哪一方的线路被打开，才是真正要算的账。',
+    },
+    {
+      kind: 'choice',
+      question: '开局就把边兵一路推到底，通常是？',
+      layout: START,
+      options: [
+        { text: '浪费步数，边兵离战场太远', correct: true },
+        { text: '最好的开局方式' },
+        { text: '能立刻威胁对方的将' },
+      ],
+      explain: '推兵要有目的：开线、控制要点、配合马炮。边兵孤军深入，往往只是送菜。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第六单元：相与象
+// ─────────────────────────────────────────────
+
+const bishop1: Lesson = {
+  id: 'bishop1',
+  title: '相怎么吃子',
+  summary: '飞田字，眼睛不能被堵',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '相走「田」，田心有眼',
+      body: '相（象）斜走两格，走出的形状是个「田」字。田字正中间那个点叫「相眼」，被任何棋子占住，这一飞就不成立——这就是「塞象眼」。相永远不能过河。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+...k.....
+.........
+.........
+.........
+.........
+.........
+.........
+....p....
+.........
+..B.K....
+`),
+      turn: 'r',
+      prompt: '用红相吃掉黑卒（注意相眼）',
+      target: sq(7, 4),
+      hint: '相在 (9,2)，田心是 (8,3)，它是空的。',
+      explain: '从 (9,2) 飞到 (7,4)，田心 (8,3) 空着，所以这一口成立。相吃子后仍不能过河。',
+    },
+    {
+      kind: 'choice',
+      question: '相眼被任意一个棋子占住，相还能往那个方向飞吗？',
+      layout: START,
+      options: [
+        { text: '不能，相眼被堵就飞不过去', correct: true },
+        { text: '能，相眼只挡对方棋子' },
+        { text: '能，但只能飞一格' },
+      ],
+      explain: '相眼不分敌我，占住就废。自己的子堵住自己的相，也是常有的事。',
+    },
+  ],
+};
+
+const bishop2: Lesson = {
+  id: 'bishop2',
+  title: '相的任务是防守',
+  summary: '守中路、护将门',
+  icon: '🛡️',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '相不是进攻子',
+      body: '相过不了河，天生只能在自己半场干活。它的价值在于：守住中路和帅门附近的要点，同时给车马炮让路。所以相丢一个，往往比丢一个兵疼得多。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'choice',
+      question: '相最主要的职责是？',
+      layout: START,
+      options: [
+        { text: '守住自己半场的要点，尤其是中路与帅门', correct: true },
+        { text: '过河进攻对方的将帅' },
+        { text: '替车当炮架' },
+      ],
+      explain: '相不能过河，谈进攻是空话。它的分量全在防守。',
+    },
+    {
+      kind: 'choice',
+      question: '为什么说「丢相」通常比「丢兵」严重？',
+      layout: START,
+      options: [
+        { text: '相一走，中线与帅门就露出来了', correct: true },
+        { text: '相的分数比车还高' },
+        { text: '规则规定丢相要判负' },
+      ],
+      explain: '相是防线的骨架。丢了相，对方的车炮就有了打中路的角度。',
+    },
+  ],
+};
+
+const bishop3: Lesson = {
+  id: 'bishop3',
+  title: '相的小测',
+  summary: '三道题检验你对相的理解',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '相能走到对方的半场吗？',
+      layout: START,
+      options: [
+        { text: '不能，相永远不过河', correct: true },
+        { text: '能，过河后走法不变' },
+        { text: '能，但只能走一步' },
+      ],
+      explain: '这是相和兵最大的区别：兵能过河，相不能。',
+    },
+    {
+      kind: 'choice',
+      question: '「塞象眼」指的是？',
+      layout: START,
+      options: [
+        { text: '用子占住相飞田时经过的那个中心点', correct: true },
+        { text: '把相逼到边线上' },
+        { text: '吃掉对方的相' },
+      ],
+      explain: '占住田心，相就飞不动。这是限制相的通用手法。',
+    },
+    {
+      kind: 'choice',
+      question: '开局时相应该什么时候动？',
+      layout: START,
+      options: [
+        { text: '需要守中路或给车让路时再动，不必抢着飞', correct: true },
+        { text: '第一步就必须飞相' },
+        { text: '永远不要动相' },
+      ],
+      explain: '相是防守子，动它要看需求。盲目飞相有时反而把帅门让开。',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────
+// 第七单元：仕、士与将帅
+// ─────────────────────────────────────────────
+
+const guard1: Lesson = {
+  id: 'guard1',
+  title: '仕怎么吃子',
+  summary: '九宫里斜走一格',
+  icon: '🍖',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '仕是九宫里的贴身侍卫',
+      body: '仕（士）斜走一格，只能待在九宫的九个点里。走法和吃法一致：斜对角有敌子，就能吃掉。它唯一的任务，就是替将帅挡住斜线上的攻击。',
+      layout: START,
+      turn: 'r',
+    },
+    {
+      kind: 'capture',
+      layout: L(`
+....k....
+.........
+.........
+.........
+.........
+.........
+.........
+...p.....
+....A....
+...K.....
+`),
+      turn: 'r',
+      prompt: '用红仕吃掉闯进九宫的黑卒',
+      target: sq(7, 3),
+      hint: '仕在九宫中心 (8,4)，黑卒在它斜上方的 (7,3)。',
+      explain: '仕只能斜走一格。这一口正好在斜对角，所以吃得掉。',
+    },
+    {
+      kind: 'choice',
+      question: '仕能走出九宫吗？',
+      layout: START,
+      options: [
+        { text: '不能，仕和将帅一样被关在九宫里', correct: true },
+        { text: '能，过了河走法不变' },
+        { text: '能，但要先吃掉一个子' },
+      ],
+      explain: '仕、士终生不出九宫。它们的活动范围就是那九个点。',
+    },
+  ],
+};
+
+const guard2: Lesson = {
+  id: 'guard2',
+  title: '将帅的安全',
+  summary: '不出宫、不照面',
+  icon: '👑',
+  xp: 12,
+  steps: [
+    {
+      kind: 'info',
+      title: '两条铁律',
+      body: '第一，将帅只能在九宫里直走一格。第二，双方将帅不能在同一条竖线上直接照面（中间必须有子）。所以「露将」往往一步就输：把挡在中间的子挪开，等于自己把将送到对方枪口。',
+      layout: START,
+      turn: 'r',
+      tip: '挪动中路那个子之前，先看一眼：这条线上是不是只剩两个将帅？',
+    },
+    {
+      kind: 'choice',
+      question: '双方将帅在同一条竖线上，中间没有任何棋子，会怎样？',
+      layout: START,
+      options: [
+        { text: '这是非法局面，走成这样的那一步不允许走', correct: true },
+        { text: '谁先看到谁赢' },
+        { text: '没事，将帅互相看不见' },
+      ],
+      explain: '「白脸将」是禁区：将帅照面等于互相将军，规则上不允许出现。',
+    },
+    {
+      kind: 'choice',
+      question: '将帅在九宫里，最不该做的是？',
+      layout: START,
+      options: [
+        { text: '没事就往中间挪，把帅门敞开', correct: true },
+        { text: '待在有士象保护的中间位置' },
+        { text: '在对方强子无法攻击时保持不动' },
+      ],
+      explain: '将帅的价值不在于参战，而在于「不被将死」。乱动只会自曝软肋，还浪费步数。',
+    },
+  ],
+};
+
+const guard3: Lesson = {
+  id: 'guard3',
+  title: '仕将小测',
+  summary: '三道题检验防守基本功',
+  icon: '📝',
+  xp: 12,
+  steps: [
+    {
+      kind: 'choice',
+      question: '仕的走法是？',
+      layout: START,
+      options: [
+        { text: '斜走一格，不出九宫', correct: true },
+        { text: '直走一格，不出九宫' },
+        { text: '斜走两格，可以出九宫' },
+      ],
+      explain: '仕斜一格、将直一格，两者都被九宫关着——这是最容易混的一对。',
+    },
+    {
+      kind: 'choice',
+      question: '将帅被将军时，可以直接「吃将军的子」吗？',
+      layout: START,
+      options: [
+        { text: '可以，只要那个子就在将帅能走到的位置', correct: true },
+        { text: '不可以，将帅永远只能躲' },
+        { text: '可以，但要先垫一个子' },
+      ],
+      explain: '吃、挡、躲是三种应将方式。将帅能顺手吃掉的将军子，是最干脆的一种。',
+    },
+    {
+      kind: 'choice',
+      question: '为什么要尽量保持「士象齐全」？',
+      layout: START,
+      options: [
+        { text: '它们是九宫防线的骨架，缺一个就出现攻击角度', correct: true },
+        { text: '它们能过河进攻' },
+        { text: '规则要求必须保留' },
+      ],
+      explain: '士象不参与进攻，但少了它们，对方的车炮就能直接照进九宫。',
+    },
+  ],
+};
+
 
 const drill = (
   id: string,
@@ -1928,48 +2857,149 @@ const u6d1 = drill('u6d1', '吃子冲刺 · 终极', '45 秒，六个目标，�
   ],
 });
 
+const pawnd1 = drill('pawnd1', '吃子冲刺 · 兵', '45 秒，小兵一步一步顶上去', 15, {
+  seconds: 45,
+  goal: 3,
+  total: 3,
+  boards: [
+    {
+      layout: L(`
+...k.....
+.........
+.........
+.........
+...pp....
+....p....
+....P....
+.........
+.........
+....K....
+`),
+    },
+  ],
+});
+
+const bishopd1 = drill('bishopd1', '吃子冲刺 · 相', '40 秒，沿着田字斜线清场', 15, {
+  seconds: 40,
+  goal: 3,
+  total: 3,
+  boards: [
+    {
+      layout: L(`
+...k.....
+.........
+.........
+.........
+.........
+..p......
+.........
+p...p....
+.........
+....K.B..
+`),
+    },
+  ],
+});
+
+const guarded1 = drill('guarded1', '吃子冲刺 · 九宫', '30 秒，把闯进九宫的敌子请出去', 15, {
+  seconds: 30,
+  goal: 2,
+  total: 2,
+  boards: [
+    {
+      layout: L(`
+...k.....
+.........
+.........
+.........
+.........
+.........
+.........
+.........
+....A....
+...nKn...
+`),
+    },
+  ],
+});
+
 export const CURRICULUM: Unit[] = [
   {
     id: 'u1',
-    title: '第一单元 · 棋盘与车马炮',
-    subtitle: '认路、认九宫，先学三员大子',
+    title: '第一单元 · 认识棋盘',
+    subtitle: '九宫、河界、胜负与记谱',
     color: 'green',
-    lessons: [u1l1, u1l2, u1l3, u1l4, u1d1],
+    lessons: [u1l1, board2, board3, board4],
   },
   {
     id: 'u2',
-    title: '第二单元 · 兵相仕将',
-    subtitle: '小兵过河、防守子与九宫规矩',
+    title: '第二单元 · 车',
+    subtitle: '横冲直撞、吃子、抢开放线',
     color: 'blue',
-    lessons: [u1l5, u1l6, u1l7, u1l8, u2d1],
+    lessons: [u1l2, car1, car2, car3, u1d1],
   },
   {
     id: 'u3',
-    title: '第三单元 · 吃子与价值',
-    subtitle: '白吃、反吃、兑子算术',
+    title: '第三单元 · 马',
+    subtitle: '日字、马腿与好马坏马',
     color: 'purple',
-    lessons: [u2l1, u2l2, u2l3, u2l4, u3d1],
+    lessons: [u1l3, horse1, horse2, horse3, u2d1],
   },
   {
     id: 'u4',
-    title: '第四单元 · 将军与应将',
-    subtitle: '三条出路、送将与长将',
+    title: '第四单元 · 炮',
+    subtitle: '隔山打牛、炮架与炮的落点',
     color: 'orange',
-    lessons: [u3l1, u3l2, u3l3, u3l4, u4d1],
+    lessons: [u1l4, cannon1, cannon2, cannon3, u3d1],
   },
   {
     id: 'u5',
-    title: '第五单元 · 基本杀法',
-    subtitle: '双车错、马后炮、重炮、闪将',
+    title: '第五单元 · 兵',
+    subtitle: '只能向前、过河封顶、老兵不死',
     color: 'teal',
-    lessons: [u4l1, u4l2, u4l3, u4l4, u4l5, u5d1],
+    lessons: [u1l5, pawn1, pawn2, pawn3, pawnd1],
   },
   {
     id: 'u6',
-    title: '第六单元 · 开局与实战',
-    subtitle: '出子效率、开局四忌、走向中局',
+    title: '第六单元 · 相',
+    subtitle: '田字、象眼与纯粹的防守',
     color: 'pink',
-    lessons: [u5l1, u5l2, u5l3, u5l4, u6d1],
+    lessons: [u1l6, bishop1, bishop2, bishop3, bishopd1],
+  },
+  {
+    id: 'u7',
+    title: '第七单元 · 仕与将',
+    subtitle: '九宫规矩、将帅安全、六子总复习',
+    color: 'green',
+    lessons: [u1l7, guard1, guard2, guard3, u1l8, guarded1],
+  },
+  {
+    id: 'u8',
+    title: '第八单元 · 吃子与价值',
+    subtitle: '白吃、反吃、兑子算术',
+    color: 'blue',
+    lessons: [u2l1, u2l2, u2l3, u2l4, u4d1],
+  },
+  {
+    id: 'u9',
+    title: '第九单元 · 将军与应将',
+    subtitle: '三条出路、送将与长将',
+    color: 'purple',
+    lessons: [u3l1, u3l2, u3l3, u3l4, u5d1],
+  },
+  {
+    id: 'u10',
+    title: '第十单元 · 基本杀法',
+    subtitle: '双车错、马后炮、重炮、闪将',
+    color: 'orange',
+    lessons: [u4l1, u4l2, u4l3, u4l4, u4l5, u6d1],
+  },
+  {
+    id: 'u11',
+    title: '第十一单元 · 开局与实战',
+    subtitle: '出子效率、开局四忌、走向中局',
+    color: 'teal',
+    lessons: [u5l1, u5l2, u5l3, u5l4],
   },
 ];
 
