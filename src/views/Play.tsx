@@ -246,8 +246,8 @@ export function Play({
     };
   }, [pauseClock, resumeClock]);
 
-  /** 真正「在打」的状态：结算页不拦返回键 */
-  const active = stage === 'playing' && !result;
+  /** 真正「在打」的状态：计时都没启动就不算（还没走第一手），结算页也不拦返回键 */
+  const active = stage === 'playing' && !result && clockOn;
   useEffect(() => {
     onActiveChange?.(active);
   }, [active, onActiveChange]);
@@ -558,7 +558,11 @@ export function Play({
   return (
     <div className="screen play">
       <header className="play-top">
-        <button className="play-exit" onClick={() => setLeaveOpen(true)} aria-label="离开对局">
+        <button
+          className="play-exit"
+          onClick={() => (active ? setLeaveOpen(true) : setStage('setup'))}
+          aria-label="离开对局"
+        >
           ✕
         </button>
         <div className="play-hud">
