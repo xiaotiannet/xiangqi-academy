@@ -1,130 +1,199 @@
+<div align="center">
+
 # 象棋学堂 · XiangQi Academy
 
-像多邻国一样学中国象棋：章节式关卡、与奥斯卡对战、体力与宝石经济、等级成就，还有一位嘴很干的教练——**奥斯卡**（一块被削成「帅」的老木头）。
+**像多邻国一样，从零学会中国象棋。**
 
-- 网页版：`npm run dev` → http://127.0.0.1:5288
-- 安卓版：`dist-apk/xiangqi-academy-v1.3.0.apk`（已签名，可直接安装）
+11 个单元 · 55 节课 · 163 个教学步骤 · 9 个限时冲刺关 · 6 套开局 · 一位嘴很干的教练
+
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white)
+![Android](https://img.shields.io/badge/Android-6.0%2B-3ddc84?logo=android&logoColor=white)
+![No Dependencies](https://img.shields.io/badge/UI%20库-0%20个-58cc02)
+
+**[下载安卓版（APK）](../../releases/latest)** · [在线体验](#本地运行) · [功能](#功能) · [技术实现](#技术实现)
+
+</div>
 
 ---
 
-## 一、功能
+## 这是什么
 
-### 1. 章节教学
-5 个单元 · 20 节课 · 80 个步骤：认识棋子（车/马/炮/兵/相/仕）→ 子力与吃子 → 将军与应将 → 五大基本杀法（双车错、马后炮、重炮、闪将、马将）→ 开局原则。
+一个**完整的中国象棋教学 App**：不是棋谱阅读器，也不是单纯的象棋游戏，而是一条从「棋子怎么走」到「怎么杀棋、怎么开局」的课程线，配上多邻国式的关卡、体力、宝石、连续打卡和等级系统。
 
-四种题型全部在棋盘上作答：走子练习、吃子练习、实战题（引擎判定「是否真的将军 / 将死」）、概念选择题。答错可重试，连错两次自动给提示，结算按失误数给 1–3 星。
+对手是一个叫**奥斯卡**的角色——一块被削成「帅」的老木头，单片眼镜、八字胡，会在你走错时嘲讽你，也会在你将军时假装镇定。它同时是教练、对手和旁白。
 
-### 2. 游戏化系统（多邻国式）
+界面全部由 **SVG + CSS** 绘制，没有一张图片素材；音效由 **WebAudio** 实时合成；奥斯卡的 116 句配音随包离线分发。整个网页版可以压成**单个 HTML 文件**，直接跑在安卓 WebView 的 `file://` 下。
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01-home.png" width="200" alt="课程地图"><br><sub>课程地图</sub></td>
+    <td align="center"><img src="docs/screenshots/03-question.png" width="200" alt="棋盘答题"><br><sub>在棋盘上答题</sub></td>
+    <td align="center"><img src="docs/screenshots/08-inplay.png" width="200" alt="人机对战"><br><sub>与奥斯卡对战</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/10-review.png" width="200" alt="对局复盘"><br><sub>逐站复盘</sub></td>
+    <td align="center"><img src="docs/screenshots/07-openings.png" width="200" alt="开局库"><br><sub>开局库</sub></td>
+    <td align="center"><img src="docs/screenshots/06-profile.png" width="200" alt="等级与成就"><br><sub>等级与成就</sub></td>
+  </tr>
+</table>
+
+---
+
+## 功能
+
+### 1. 课程：每种棋子一个单元
+
+课程不是按「难度」排的，而是按**棋子**排的——先把一个子讲透，再学下一个。每个单元 3 节新内容 + 1 节小测 + 1 个限时吃子冲刺关。
+
+| 单元 | 内容 |
+| --- | --- |
+| 一 · 认识棋盘 | 棋盘与九宫、河界与过河、怎么算赢、记谱入门 |
+| 二 · 车 | 横冲直撞、怎么吃子、该站在哪 |
+| 三 · 马 | 走日字、马腿、好马与坏马 |
+| 四 · 炮 | 隔山打牛、炮架的选择、炮的落点 |
+| 五 · 兵 | 只能向前、过河卒的威力、老兵不死 |
+| 六 · 相 | 田字与象眼、纯粹的防守 |
+| 七 · 仕与将 | 九宫规矩、将帅安全、六子总复习 |
+| 八 · 吃子与价值 | 白吃、反吃、兑子算术 |
+| 九 · 将军与应将 | 三条出路、送将与长将 |
+| 十 · 基本杀法 | 双车错、马后炮、重炮、闪将 |
+| 十一 · 开局与实战 | 出子效率、开局四忌、走向中局 |
+
+**四种题型全部在棋盘上作答**：走子练习、吃子练习、实战题（引擎真的去判定「这一手是不是将军 / 是不是将死」）、概念选择题。答错可以重试，连错两次自动给提示，结算按失误数给 1–3 星。
+
+### 2. 限时冲刺关
+
+每个单元末尾是一个**倒计时吃子挑战**：给定一个残局，在 30–60 秒内吃光指定的敌方棋子。连续吃子会累积连击，全清三星、达标两星、失败一星且不记录完成。
+
+这些残局不是手写的——`npm run validate:drills` 会用 BFS 反算「最少几步能吃干净」，保证每一关都真的可解，并顺便标出难度。
+
+### 3. 与奥斯卡对战
+
+- **红黑随机**：开局随机分配执红执黑，执红先走；奥斯卡执红时它会先落子。
+- **30 分钟包干**：从你走出第一手才开始计时；切后台 / 锁屏自动暂停；超时按残局剩余子力判胜负。
+- **思考有停顿**：AI 落子前至少停 700 ms，让你看清自己刚走的那一步。
+- **实时插话**：开局招呼、走子违规、你将军它、它将军你、你吃它的子（按兵种吐槽）、它走了软手——同一句话 4 秒内不重复。
+- **吃子计分**：顶部 HUD 显示双方吃子分（车 9 / 马炮 4 / 相仕 2 / 兵 1）和倒计时，落后时数字会变红。
+- **提示要确认**：💡提示会先弹出确认层（花 15 💎 让奥斯卡算一手最佳着法），确认后才扣钻石。
+- **悔棋有价**：默认不显示悔棋按钮，需要在设置里打开；每次悔棋扣 1 点体力。
+
+### 4. 对局复盘
+
+一局结束后（或者在「对战记录」里点历史对局）可以进复盘：
+
+- **逐站引导**，不是一口气跳到终局。站点依次是：开局 → 你最亏的几手 → 你最亮的几手 → 终局。
+- 每一手用引擎重新评估，标成 **好棋 / 正着 / 稍亏 / 失误 / 漏着**。
+- **优势条 + 优势曲线**：整盘棋在你视角的分差，正数你占优，负数奥斯卡占优，跟着当前手实时滑动。
+- 会反查这局用的是哪条开局，并给出「最大领先 / 最大落后 / 亮点 / 失误」四宫格，点一下直接跳到那个局面。
+
+### 5. 游戏化
+
 | 系统 | 规则 |
 | --- | --- |
-| ❤️ 体力 | 上限 5 点；答错一题 -1，输一局 -1；每 18 分钟自然恢复 1 点；60 💎 补满 |
-| 💎 宝石 | 课程结算 10（完美 +10，首次 +15）、任务 15–30、宝箱 35、成就 20–120、胜局 25 |
-| ⚡ 经验 / 等级 | 每级所需经验递增，Lv.1 棋童 → Lv.25 棋圣；升级额外 +30 💎 |
+| ❤️ 体力 | 上限 5 点；答错一题 -1，输一局 -1；每 18 分钟恢复 1 点；60 💎 补满 |
+| 💎 宝石 | 课程结算 10（完美 +10、首次 +15）、每日任务 15–30、宝箱 35、成就 20–120、胜局 25 |
+| ⚡ 等级 | 每级所需经验递增，Lv.1 棋童 → Lv.25 棋圣；升级额外 +30 💎 |
 | 🎯 每日任务 | 每天 3 条（上课 / 答对 / 赢棋），按日期种子生成，可领宝石 |
-| 🏅 成就 | 9 个成就，达成即自动发放并庆祝 |
+| 🏅 成就 | 9 个成就，达成即自动发放；「我的」页以一行图标展示，点开浮出进度详情 |
 | 🎁 每日宝箱 | 每天一次，体力见底时额外多给 |
-| 🔥 连续打卡 | 记录连续学习天数，火苗状态会改变奥斯卡的表情 |
+| 🔥 连续打卡 | 连续学习天数，火苗状态会改变奥斯卡的表情 |
 
-### 3. 奥斯卡（吉祥物 + 语音）
+### 6. 奥斯卡
+
 - 纯 SVG 绘制的「帅」棋子：单片眼镜、八字胡、五种表情（idle / happy / sad / smug / think）。
-- 台词库约 80 句，按场景抽取：问候（分早/中/晚/深夜）、答对、答错、完美通关、体力耗尽、升级、成就、胜/负/和、吃子、将军、提醒。
-- 语音是**随包分发的音频**（104 句、约 1.9 MB，edge-tts 合成后打进 APK/assets），不依赖手机有没有中文 TTS 引擎，也不联网；只有少数动态句子（含数字/称号）才会退回系统 `TextToSpeech` / Web Speech。可在「我的 → 奥斯卡语音」开关，并支持试听。
-- **对局反馈**：每一步落子都有木质落子音效（吃子更沉）；**走子有 320ms 滑动动画**，落点会短暂高亮，不用靠猜知道它走了哪；
-  吃子时落点炸开一圈红环；**将军、吃子会震动**（将军是双击，吃子是单记，普通落子刻意不震）。
-- **对手就是奥斯卡**：对战页标题、头像、进度文案都换成奥斯卡本人，难度仍是入门 / 进阶 / 高手三档。
-- **悔棋有价**：对战页的「悔棋」按钮**默认不显示**，要在「我的 → 设置 → 对局显示悔棋」里打开；每次悔棋消耗 1 点 ❤️ 体力，体力为 0 时不能悔。
-- **对战实时插话**：开局招呼、走子违规（「这个子走不到那儿」）、你将军它（「将军，别高兴太早」）、它将军你（「将军，听见了没有」）、
-  你吃它的子（按兵种吐槽，如「我的马，你居然吃我的马」）、它吃你的子（「这个我收下了」）、它走了软手（「我让了你一手，别谢我」）。
-  插话有 4 秒节流，避免变成单口相声。
-- 关键操作带震动反馈。
+- **116 句配音随包分发**（约 2.4 MB），不依赖手机有没有中文 TTS，也不联网；只有少数含数字 / 称号的动态句子才退回系统 `TextToSpeech`。
+- 落子有木质音效（吃子更沉），将军双击震动，吃子单记震动，普通落子刻意不震。
 
-### 4. 每日提醒
-「我的 → 每日提醒」可开关并选择时间（8/12/18/19/20/21/22 点）。安卓端用 `AlarmManager` 每日重复闹钟 + 通知渠道推送，文案每次启动重新抽一句；重启后由 `BOOT_COMPLETED` 广播重新挂上。
+### 7. 开局库
 
-### 5. 对局复盘
-一局结束后点「🔍 复盘本局」：逐手用引擎评估（深度 2），把每一手标成 **好棋 / 正着 / 稍亏 / 失误 / 漏着**，给出准确度、各类着法计数、最可惜的一手，可一键跳到那一步。还会反查本局用的是哪条开局，并由奥斯卡给一句总结。
-
-### 6. 开局库
-6 条常见开局（中炮对屏风马、顺手炮、列手炮、仙人指路、飞相局、起马局），逐手演示 + 思路/要点讲解。
-- 全部 33 手都经引擎校验：合法、中文记谱与引擎一致。
-- 与奥斯卡对战时 AI 有 80% 概率从开局库出招，所以每局前半段不会千篇一律。
+6 套常见开局（中炮对屏风马、顺手炮、列手炮、仙人指路、飞相局、起马局），逐手演示 + 思路讲解。33 手全部经引擎校验：合法、中文记谱与引擎一致。对战时 AI 有 80% 概率从开局库出招，所以每局前半段不会千篇一律。
 
 ---
 
-## 二、技术栈与结构
+## 技术实现
 
-Vite 6 + React 19 + TypeScript，**无 UI 库、无图片资源**（棋盘与棋子全是 SVG，音效由 WebAudio 合成）。生产包约 350 KB JS + 29 KB CSS。
+Vite 6 + React 19 + TypeScript。**没有 UI 库，没有图片资源，没有后端**。
+
+```mermaid
+flowchart LR
+    UI[React 视图<br/>Home / Lesson / Play / Review] --> Engine[规则引擎<br/>rules.ts]
+    UI --> State[进度与经济<br/>localStorage]
+    UI --> Worker[AI Worker<br/>negamax + α-β]
+    Worker -. 同一套规则 .-> Engine
+    Engine --> Review[复盘评分]
+    UI --> Native[原生桥<br/>TTS / 震动 / 暂停]
+    Native --> Android[Android WebView 壳]
+```
+
+几个关键取舍：
+
+- **规则引擎自研**，坐标 `index = row * 9 + col`（row 0 是黑方底线）。所有合法性判断、将军 / 将死 / 困毙判定都在这里，AI 与复盘共用同一套规则，不会出现「复盘说这步非法」。
+- **AI 跑在 Web Worker 里**：negamax + alpha-beta + 位置价值表 + 静态搜索（quiescence），三档难度对应深度 2 / 3 / 4–5。导出成内联 worker，UI 线程不会被算杀卡住。
+- **复盘不引入第二个评估器**：直接复用引擎的静态评估，评分单位与子力价值一致（车 900 / 炮 450 / 马 400 / 兵 100），所以「亏了 3.2 子」是真的能对上棋盘的。
+- **整个前端压成单文件**：`?worker&inline` + CSS/JS 全内联，产出只有一个 `index.html`。安卓 WebView 用 `file://` 加载时没有模块跨域问题，也不会因为某条相对路径写错而白屏。
+- **不依赖 Gradle 打 APK**：手工 `aapt2 → javac → d8 → zipalign → apksigner`，构建机上不需要 Android Studio。
+
+### 目录
 
 ```
 src/
   game/        types / board / rules / notation / ai / ai.worker / review
-  content/     curriculum（20 课） / openings（开局库） / oscar（台词）
+  content/     curriculum（55 课） / openings（开局库） / oscar（台词）
   state/       progress（经济与进度） / game（hook 封装） / engine（Worker 调度）
                native（原生桥） / celebrate（庆祝事件） / sound
-  components/  Board / Oscar / TopBar / Sheet / CelebrationHost
-  views/       Home / LessonView / Play / ReviewView / Openings / Profile
-android/       原生 WebView 壳（Java），无 Gradle
-scripts/       校验、图标生成、单文件内联、APK 构建
+  components/  Board / Oscar / Sheet / CelebrationHost
+  views/       Home / LessonView / DrillView / Play / ReviewView / Openings / Profile
+android/       原生 WebView 壳（Java，无 Gradle）
+scripts/       内容校验 / 语音合成 / 单文件内联 / APK 构建
+docs/          截图等文档资源
 ```
-
-关键取舍：
-- **规则引擎自研**，坐标 `index = row*9+col`（row0 = 黑方底线）；AI 用 negamax + alpha-beta + 位置价值表 + 静态搜索，跑在 Worker 里。
-- **Worker 内联**（`?worker&inline`），整套前端可打成单个 `index.html`，在安卓 `file://` 下没有模块跨域问题。
-- **复盘用同一套引擎**，不引入第二个评估器，评分单位与子力价值一致（车 900 / 炮 450 / 马 400 / 兵 100）。
 
 ---
 
-## 三、开发与构建
+## 本地运行
 
 ```bash
 npm install
-npm run dev              # 开发服务器 :5288
-npm run build            # 网页版构建（tsc + vite）
-npm run validate         # 校验 20 节课 + 6 条开局（合法性/可解性/记谱）
-npm run voice            # 重新合成奥斯卡语音包（改台词后跑一次）
-npm run build:apk        # 出安卓包 → dist-apk/xiangqi-academy-v1.3.0.apk
+
+npm run dev          # 开发服务器 → http://127.0.0.1:5288
+npm run build        # 网页版构建（tsc --noEmit + vite build）
+npm run validate     # 校验全部课程 / 开局 / 冲刺关
 ```
 
-`npm run build:apk` 不依赖 Gradle，链路是：
-`vite(单文件内联) → aapt2 compile/link → javac(JDK8, bootclasspath=android.jar) → d8 → 组装 → zipalign → apksigner`。
+`npm run validate` 会做三件事，改完内容务必跑一次：
 
-环境要求（本机已满足）：
-- Android SDK：`platforms/android-34` + `build-tools/34.0.0`（默认路径 `E:/Dev/SDK/Android/sdk`，可用 `ANDROID_SDK_ROOT` 覆盖）
-- JDK 8 用于 `javac`，JDK 11 用于 `d8` / `apksigner`（脚本内已指定）
-- 签名文件首次构建时自动生成：`android/keystore/xiangqi.jks`（口令 `xiangqi2026`，自签名，仅适合自用分发；上架请换正式证书）
+- **课程**：每道题的题解是否合法、是否真的达成目标（比如「这步是否将死」）、局面是否含双方将帅。
+- **开局**：每一手是否合法；中文记谱与引擎算出来的是否一致。
+- **冲刺关**：盘面是否合法、目标数是否与盘面一致，并用 BFS 求出「最少几步全清」，算不出来就说明这一关根本不可通关。
 
-APK 信息：包名 `com.oscar.xiangqi`，minSdk 23（Android 6.0），targetSdk 34，竖屏，约 1.7 MB（其中约 1.9 MB 是语音包，压缩后约 1.6 MB）。
-
-### 白屏排查（v1.1.1 起）
-
-APK 内的网页已带「启动守卫」：脚本报错、Promise 未捕获、或加载 5 秒后 `#root` 仍为空，会直接在屏幕上显示错误信息与设备 UA，不再是无信息的白屏。
-
-发版前建议先跑一次产物自检（不用装机）：
+## 打安卓包
 
 ```bash
-chrome --headless=new --enable-logging=stderr --virtual-time-budget=8000 \
-  --dump-dom "file:///<项目路径>/android/app/assets/www/index.html" > dom.html 2> console.log
-# dom.html 里 <div id="root"> 有内容 = 正常；console.log 里的 CONSOLE 行就是报错原文
+npm run build:apk    # → dist-apk/xiangqi-academy-v<版本>.apk
 ```
 
-真机排障：`adb logcat -s XQWeb`（网页控制台已转发到 logcat），或 `chrome://inspect` 远程调试（已开启 WebView 调试）。
+链路是 `vite(单文件内联) → aapt2 → javac(JDK 8) → d8 → 组装 → zipalign → apksigner`。
 
-v1.1.0 曾在真机白屏，原因是内联脚本被放进 `<head>` 同步执行，早于 `<div id="root">` 解析，React 抛 #299。v1.1.1 已把内联脚本移到 `</body>` 前。
+环境要求：
 
----
+- Android SDK：`platforms/android-34` + `build-tools/34.0.0`（默认 `E:/Dev/SDK/Android/sdk`，可用 `ANDROID_SDK_ROOT` 覆盖）
+- JDK 8（`javac`）与 JDK 11（`d8` / `apksigner`）
 
-## 四、已知限制
+包名 `com.oscar.xiangqi`，minSdk 23（Android 6.0），targetSdk 34，竖屏，约 2.1 MB（其中语音包约 2.4 MB 未压缩）。
 
-- 语音包覆盖全部固定台词；升级/打卡等含数字的句子按固定句式播报（不念具体数字），保证任何机器都有声音。
-- 语音包由 `npm run voice` 生成，需要联网调用 edge-tts（只在开发机执行，产物随包离线运行）。
-- 复盘深度为 2，快速但对复杂战术的判断会有噪声，标注是「参考」而非判定。
-- 安卓包用自签名证书，不是 Play 商店分发包。
-- 未做云同步：进度存在本机 `localStorage`。
+> **签名说明**：仓库不包含签名证书。首次构建会在 `android/keystore/` 下自动生成一个自签名 keystore，适合自用分发；要发布到应用商店请换成正式证书，并把口令通过环境变量传入。
 
 ---
 
-## 五、验证记录
+## 已知限制
 
-- `tsc --noEmit` 零错误；网页版与 APK 版均构建通过。
-- `npm run validate`：20 节课 / 80 步全部可解且合法；6 条开局 33 手全部合法、记谱一致。
-- 复盘链路用真实对局着法跑通：着法分级、汇总、开局识别均符合预期。
+- 复盘深度固定为 2，速度快但对复杂战术的判断有噪声，标注是「参考」而非判定。
+- 进度存在本机 `localStorage`，没有云同步，换设备不继承。
+- 语音包覆盖全部固定台词；含数字 / 称号的句子按固定句式播报，不念具体数字。
+- 安卓包使用自签名证书，不是 Play 商店分发包。
+
+## License
+
+[MIT](LICENSE)

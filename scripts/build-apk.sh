@@ -72,13 +72,15 @@ print('packed ->', out)
 " build/base.apk build/dex/classes.dex app/assets build/unsigned.apk
 
 echo "==> 6/6 对齐与签名"
-KS="$ROOT/android/keystore/xiangqi.jks"
+KS="${XQ_KEYSTORE:-$ROOT/android/keystore/xiangqi.jks}"
+# 证书口令从环境变量取；公开仓库里不放真实的 keystore 与口令
+KP="${XQ_KEYSTORE_PASS:-xiangqi2026}"
 if [ ! -f "$KS" ]; then
   mkdir -p "$(dirname "$KS")"
   keytool -genkeypair -keystore "$KS" -alias xiangqi -keyalg RSA -keysize 2048 \
-    -validity 12000 -storepass xiangqi2026 -keypass xiangqi2026 \
+    -validity 12000 -storepass "$KP" -keypass "$KP" \
     -dname "CN=XiangQi Academy, O=Oscar, C=CN" >/dev/null 2>&1
-  echo "    已生成签名文件 keystore/xiangqi.jks"
+  echo "    已生成签名文件 $KS"
 fi
 
 "$BT/zipalign.exe" -f -p 4 build/unsigned.apk build/aligned.apk
@@ -87,7 +89,7 @@ VERSION="$(sed -n 's/.*android:versionName="\([^"]*\)".*/\1/p' app/AndroidManife
 [ -n "$VERSION" ] || VERSION="dev"
 APK="$OUT/xiangqi-academy-v${VERSION}.apk"
 "$BT/apksigner.bat" sign \
-  --ks "$KS" --ks-pass pass:xiangqi2026 --key-pass pass:xiangqi2026 --ks-key-alias xiangqi \
+  --ks "$KS" --ks-pass pass:"$KP" --key-pass pass:"$KP" --ks-key-alias xiangqi \
   --v1-signing-enabled true --v2-signing-enabled true \
   --out "$APK" build/aligned.apk
 
