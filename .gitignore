@@ -1,0 +1,21 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dist-mobile/
+dist-apk/
+android/build/
+*.idsig
+
+# WebView 内联资源：由 scripts/build-standalone.mjs 生成（index.html + 语音副本）
+android/app/assets/www/
+
+# 临时脚本产物
+.tmp/
+*.local
+.DS_Store
+
+# 说明：android/keystore/xiangqi.jks 是发布会用到的自签名证书（口令写在 scripts/build-apk.sh 里）。
+# 本仓库是本地私有库，保留它可以保证换机器后仍能打出「可覆盖升级」的同签名 APK。
+# 如果将来要把这个仓库公开或推到远端，请先把 keystore 移出并另存备份。
